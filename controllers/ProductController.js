@@ -1,4 +1,6 @@
 import Products from "../models/ProductModel.js";
+import multer from "multer";
+import path from 'path'
 
 export const ProductsController = async (req, res) => {
     try {
@@ -10,15 +12,16 @@ export const ProductsController = async (req, res) => {
         return res.status(200).send({
             success: true,
             message: "Products Loaded",
-            data: data.map(product => ({
-                _id: product._id,
-                title: product.title,
-                price: product.price,
-                description: product.description,
-                category: product.category,
-                image: product.image,
-                rating: product.rating,
-            })),
+            data,
+            // data: data.map(product => ({
+            //     _id: product._id,
+            //     title: product.title,
+            //     price: product.price,
+            //     description: product.description,
+            //     category: product.category,
+            //     image: product.image,
+            //     rating: product.rating,
+            // })),
         });
         
     } catch (error) {
@@ -57,28 +60,52 @@ export const ProductController = async (req, res) => {
 };
 
 
-export const AddProduct = async(req,res)=>{
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); 
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); 
+    },
+});
+
+
+const upload = multer({ storage });
+
+
+export const AddProduct = async (req, res) => {
     try {
-        const {title ,  price , description  , category} = req.body;
+       
+        const imagePath = req.file.path;
+
+        const { title, price, description, category } = req.body;
+
+
         const product = new Products({
             title: title,
             price: price,
             description: description,
-            category: category
-            });
-            await product.save();
-            res.status(200).send({
-                success: true,
-                message: "Product Added",
-                product,
-            })
+            category: category,
+            image: imagePath, 
+        });
+
+        await product.save();
+
+        res.status(200).send({
+            success: true,
+            message: "Product Added",
+            product,
+        });
 
     } catch (error) {
-     console.log(error);
-     res.status(400).send({
-        success : false,
-        message : "Error in Add Product controller",
-        error,
-     })
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            message: "Error in Add Product controller",
+            error,
+        });
     }
-}
+};
+
+export const uploadProductImage = upload.single('image');
