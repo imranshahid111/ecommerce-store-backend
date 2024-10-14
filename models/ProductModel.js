@@ -13,9 +13,9 @@ const productSchema = new mongoose.Schema({
         type: String,
         default: "user",
     },
-    image: { // Change this to imagePath
-        type: String, // Store the file path as a string
-        required: true, // Optional: make it required if you always want to have an image
+    image: { 
+        type: String, 
+        required: true,
     },
     category: {
         type: String,
