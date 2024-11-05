@@ -1,0 +1,16 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "server.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "env": {
+      "MY_API_KEY": "@my-api-key",
+      "Mongo_URL": "@mongo-url",
+      "JWT_SECRET": "@jwt-secret"
+    },
+    "public": false
+  }
+  
